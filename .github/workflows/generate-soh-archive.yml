@@ -12,11 +12,17 @@ jobs:
 
     - name: Generate SoH archive
       run: |
-        cd data
-        find . -type f -name '*.ootrs' | while read filename; do unzip -o -d "./Music/`basename -s .ootrs "$filename"`" "$filename"; done;
+        mkdir data/Music_Extracted
+        cd data/Music
+        find . -type f -name '*.ootrs' | while read filename; do \
+          output_dir="../Music_Extracted/${filename%.*}/"; \
+          mkdir -p "$output_dir"; \
+          unzip -o -d "$output_dir" "$filename"; \
+          done; \
+        cd ../
         wget https://github.com/leggettc18/SequenceOTRizer/releases/download/v0.4/SequenceOTRizer-0.2-Linux.tar.gz
         tar -xzvf SequenceOTRizer-0.2-Linux.tar.gz
-        ./SequenceOTRizer --seq-path Music --otr-name daruniasjoy
+        ./SequenceOTRizer --seq-path Music_Extracted --otr-name daruniasjoy
 
     - name: Upload generated daruniasjoy.otr
       uses: actions/upload-artifact@v4
